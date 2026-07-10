@@ -3,43 +3,15 @@
 @tailwind utilities;
 
 @layer base {
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
   body {
     background: #ffffff;
     color: #111827;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
-  }
-}
-
-@layer components {
-  .card {
-    @apply bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200;
-  }
-  .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 bg-purple-700 hover:bg-purple-800
-           text-white font-medium px-4 py-2.5 rounded-xl text-sm transition-all duration-150
-           disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none
-           focus:ring-2 focus:ring-purple-700 focus:ring-offset-2 w-full;
-  }
-  .input {
-    @apply w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800
-           placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-700
-           focus:border-transparent transition-all duration-150 bg-gray-50;
-  }
-  .select {
-    @apply w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800
-           focus:outline-none focus:ring-2 focus:ring-purple-700 focus:border-transparent
-           transition-all duration-150 bg-gray-50 cursor-pointer;
-  }
-  .result-box {
-    @apply w-full border border-purple-100 rounded-xl px-4 py-3 text-sm text-gray-700
-           bg-purple-50 resize-none focus:outline-none leading-relaxed font-mono;
-  }
-  .label {
-    @apply block text-xs font-medium text-gray-500 mb-1.5;
-  }
-  .spinner {
-    @apply w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin;
   }
 }

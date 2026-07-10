@@ -1,8 +1,9 @@
-import './globals.css';
+import "./globals.css";
 
 export const metadata = {
-  title: 'BrandForge AI',
-  description: 'AI-powered content generation for creators, brands and marketers.',
+  title: "BrandForge AI",
+  description:
+    "AI-powered content generation for creators, brands and marketers.",
 };
 
 export default function RootLayout({ children }) {
@@ -10,7 +11,11 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"

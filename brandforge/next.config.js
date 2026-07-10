@@ -1,6 +1,3 @@
 /** @type {import('next').NextConfig} */
-module.exports = {
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://your-app.onrender.com',
-  },
-};
+const nextConfig = {};
+module.exports = nextConfig;
