@@ -8,7 +8,7 @@ if (!config.geminiApiKey) {
 const genAI = new GoogleGenerativeAI(config.geminiApiKey);
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.5-flash",
+  model: "gemini-1.5-flash",
 });
 
 export async function askGemini(prompt) {

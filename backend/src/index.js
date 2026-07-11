@@ -9,7 +9,19 @@ import "./croo/provider.js";
 const app = express();
 
 // Middleware
-app.use(cors());
+const allowed_origins = [process.env.CLIENT_URL, "http://localhost:3000"];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowed_origins.includes(origin)) return callback(null, true);
+      return callback(new Error("Blocked by CORS"));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
