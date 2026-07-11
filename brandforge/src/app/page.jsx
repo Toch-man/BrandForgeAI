@@ -13,16 +13,10 @@ import {
   Check,
 } from "lucide-react";
 
-// ─── API base URL ─────────────────────────────────────────
-// Change NEXT_PUBLIC_API_URL in .env.local to your Render backend URL
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "https://your-render-backend.onrender.com";
 
 const PLATFORMS = ["Twitter", "Facebook", "LinkedIn", "Instagram"];
-
-// ─────────────────────────────────────────────────────────
-// Small reusable components
-// ─────────────────────────────────────────────────────────
 
 function CopyButton({ text }) {
   const [copied, setCopied] = useState(false);
@@ -159,7 +153,6 @@ function ErrorMessage({ message }) {
 function CardShell({ icon: Icon, title, description, children }) {
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col gap-5">
-      {/* Card header */}
       <div className="flex items-start gap-3">
         <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center shrink-0">
           <Icon size={18} className="text-purple-700" />
@@ -173,15 +166,11 @@ function CardShell({ icon: Icon, title, description, children }) {
           </p>
         </div>
       </div>
-      {/* Card body */}
       <div className="flex flex-col gap-3">{children}</div>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────
-// Shared fetch helper
-// ─────────────────────────────────────────────────────────
 async function callAgent(endpoint, body) {
   const res = await fetch(`${API_URL}/agent/${endpoint}`, {
     method: "POST",
@@ -202,8 +191,6 @@ function formatOutput(data) {
 
 // ─────────────────────────────────────────────────────────
 // SERVICE CARD 1 — Caption Generator
-// Calls: POST /agent/caption
-// Body:  { topic, platform }
 // ─────────────────────────────────────────────────────────
 function CaptionCard() {
   const [topic, setTopic] = useState("");
@@ -247,16 +234,23 @@ function CaptionCard() {
         <Select value={platform} onChange={setPlatform} options={PLATFORMS} />
       </div>
       <ErrorMessage message={error} />
-      <GenerateButton onClick={generate} loading={loading} label="Generate Caption" />
-      <ResultArea value={result} label="Generated Caption" loading={loading} rows={4} />
+      <GenerateButton
+        onClick={generate}
+        loading={loading}
+        label="Generate Caption"
+      />
+      <ResultArea
+        value={result}
+        label="Generated Caption"
+        loading={loading}
+        rows={4}
+      />
     </CardShell>
   );
 }
 
 // ─────────────────────────────────────────────────────────
 // SERVICE CARD 2 — Hashtag Generator
-// Calls: POST /agent/hashtags
-// Body:  { topic, platform }
 // ─────────────────────────────────────────────────────────
 function HashtagCard() {
   const [topic, setTopic] = useState("");
@@ -275,12 +269,12 @@ function HashtagCard() {
       const list = Array.isArray(data)
         ? data
         : Array.isArray(data.hashtags)
-        ? data.hashtags
-        : null;
+          ? data.hashtags
+          : null;
 
       if (list) {
         setResult(
-          list.map((h) => (h.startsWith("#") ? h : `#${h}`)).join("  ")
+          list.map((h) => (h.startsWith("#") ? h : `#${h}`)).join("  "),
         );
       } else {
         setResult(formatOutput(data));
@@ -312,16 +306,23 @@ function HashtagCard() {
         <Select value={platform} onChange={setPlatform} options={PLATFORMS} />
       </div>
       <ErrorMessage message={error} />
-      <GenerateButton onClick={generate} loading={loading} label="Generate Hashtags" />
-      <ResultArea value={result} label="Generated Hashtags" loading={loading} rows={4} />
+      <GenerateButton
+        onClick={generate}
+        loading={loading}
+        label="Generate Hashtags"
+      />
+      <ResultArea
+        value={result}
+        label="Generated Hashtags"
+        loading={loading}
+        rows={4}
+      />
     </CardShell>
   );
 }
 
 // ─────────────────────────────────────────────────────────
 // SERVICE CARD 3 — Content Ideas Generator
-// Calls: POST /agent/content-ideas
-// Body:  { niche }
 // ─────────────────────────────────────────────────────────
 function ContentIdeasCard() {
   const [niche, setNiche] = useState("");
@@ -339,11 +340,24 @@ function ContentIdeasCard() {
       const list = Array.isArray(data)
         ? data
         : Array.isArray(data.ideas)
-        ? data.ideas
-        : null;
+          ? data.ideas
+          : null;
 
       if (list) {
-        setResult(list.map((idea, i) => `${i + 1}. ${idea}`).join("\n"));
+        setResult(
+          list
+            .map((idea, i) => {
+              if (typeof idea === "string") return `${i + 1}. ${idea}`;
+              return `${i + 1}. ${
+                idea.title ||
+                idea.idea ||
+                idea.content ||
+                idea.description ||
+                Object.values(idea)[0]
+              }`;
+            })
+            .join("\n"),
+        );
       } else {
         setResult(formatOutput(data));
       }
@@ -370,16 +384,23 @@ function ContentIdeasCard() {
         />
       </div>
       <ErrorMessage message={error} />
-      <GenerateButton onClick={generate} loading={loading} label="Generate 10 Ideas" />
-      <ResultArea value={result} label="10 Content Ideas" loading={loading} rows={8} />
+      <GenerateButton
+        onClick={generate}
+        loading={loading}
+        label="Generate 10 Ideas"
+      />
+      <ResultArea
+        value={result}
+        label="10 Content Ideas"
+        loading={loading}
+        rows={8}
+      />
     </CardShell>
   );
 }
 
 // ─────────────────────────────────────────────────────────
 // SERVICE CARD 4 — Content Calendar Generator
-// Calls: POST /agent/content-calendar
-// Body:  { niche, platform }
 // ─────────────────────────────────────────────────────────
 function ContentCalendarCard() {
   const [niche, setNiche] = useState("");
@@ -396,17 +417,28 @@ function ContentCalendarCard() {
     try {
       const data = await callAgent("content-calendar", { niche, platform });
 
-      if (Array.isArray(data)) {
+      const days = Array.isArray(data)
+        ? data
+        : Array.isArray(data.days)
+          ? data.days
+          : null;
+
+      if (days) {
         setResult(
-          data
+          days
             .map((entry, i) => {
               if (typeof entry === "string") return `Day ${i + 1}: ${entry}`;
               const day = entry.day || entry.date || `Day ${i + 1}`;
               const topic =
-                entry.topic || entry.title || entry.content || JSON.stringify(entry);
-              return `${day}: ${topic}`;
+                entry.topic ||
+                entry.title ||
+                entry.content ||
+                entry.caption ||
+                "";
+              const cta = entry.cta ? ` → ${entry.cta}` : "";
+              return `${day}: ${topic}${cta}`;
             })
-            .join("\n")
+            .join("\n"),
         );
       } else {
         setResult(formatOutput(data));
@@ -438,8 +470,17 @@ function ContentCalendarCard() {
         <Select value={platform} onChange={setPlatform} options={PLATFORMS} />
       </div>
       <ErrorMessage message={error} />
-      <GenerateButton onClick={generate} loading={loading} label="Generate Calendar" />
-      <ResultArea value={result} label="7-Day Content Calendar" loading={loading} rows={8} />
+      <GenerateButton
+        onClick={generate}
+        loading={loading}
+        label="Generate Calendar"
+      />
+      <ResultArea
+        value={result}
+        label="7-Day Content Calendar"
+        loading={loading}
+        rows={8}
+      />
     </CardShell>
   );
 }
@@ -450,49 +491,49 @@ function ContentCalendarCard() {
 export default function Home() {
   return (
     <div className="min-h-screen bg-white">
-
-      {/* ══ HEADER ══════════════════════════════════════ */}
+      {/* HEADER */}
       <header className="sticky top-0 z-10 bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-
-          {/* Logo */}
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-[#6D28D9] flex items-center justify-center shrink-0">
               <Zap size={15} className="text-white" />
             </div>
             <div>
-              <p className="font-bold text-gray-900 leading-none">BrandForge AI</p>
+              <p className="font-bold text-gray-900 leading-none">
+                BrandForge AI
+              </p>
               <p className="text-xs text-gray-400 mt-0.5 hidden sm:block leading-none">
                 AI-powered content generation
               </p>
             </div>
           </div>
 
-          {/* AI Online badge */}
           <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-3 py-1.5">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shrink-0" />
-            <span className="text-xs font-semibold text-green-700">AI Online</span>
+            <span className="text-xs font-semibold text-green-700">
+              AI Online
+            </span>
           </div>
-
         </div>
       </header>
 
-      {/* ══ HERO ════════════════════════════════════════ */}
+      {/* HERO */}
       <section className="max-w-6xl mx-auto px-6 pt-12 pb-10 text-center">
         <div className="inline-flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-full px-4 py-1.5 mb-5">
           <Sparkles size={12} className="text-purple-700" />
-          <span className="text-xs font-medium text-purple-700">Powered by Gemini AI</span>
+          <span className="text-xs font-medium text-purple-700">
+            Powered by Gemini AI
+          </span>
         </div>
         <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
-          Create content that{" "}
-          <span className="text-[#6D28D9]">converts</span>
+          Create content that <span className="text-[#6D28D9]">converts</span>
         </h1>
         <p className="text-gray-500 text-lg max-w-xl mx-auto leading-relaxed">
           AI-powered content generation for creators, brands and marketers.
         </p>
       </section>
 
-      {/* ══ 4 SERVICE CARDS ═════════════════════════════ */}
+      {/* 4 SERVICE CARDS */}
       <main className="max-w-6xl mx-auto px-6 pb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <CaptionCard />
@@ -502,27 +543,29 @@ export default function Home() {
         </div>
       </main>
 
-      {/* ══ FOOTER ══════════════════════════════════════ */}
+      {/* FOOTER */}
       <footer className="border-t border-gray-100 bg-gray-50">
         <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-md bg-[#6D28D9] flex items-center justify-center">
               <Zap size={11} className="text-white" />
             </div>
-            <span className="text-sm font-semibold text-gray-700">BrandForge AI</span>
+            <span className="text-sm font-semibold text-gray-700">
+              BrandForge AI
+            </span>
           </div>
           <p className="text-xs text-gray-400 text-center">
             Powered by{" "}
-            <span className="text-purple-700 font-medium">Gemini AI</span>
-            {" "}•{" "}
-            <span className="text-purple-700 font-medium">CROO Agent Network</span>
+            <span className="text-purple-700 font-medium">Gemini AI</span> •{" "}
+            <span className="text-purple-700 font-medium">
+              CROO Agent Network
+            </span>
           </p>
           <p className="text-xs text-gray-400">
             © {new Date().getFullYear()} BrandForge AI
           </p>
         </div>
       </footer>
-
     </div>
   );
 }
