@@ -4,7 +4,7 @@ import { config } from "../config.js";
 const genAI = new GoogleGenerativeAI(config.geminiApiKey);
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.5-flash-preview-05-20",
+  model: "gemini-2.0-flash",
 });
 
 export async function handleTask(event) {
